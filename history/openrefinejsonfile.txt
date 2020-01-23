@@ -1,0 +1,264 @@
+[
+  {
+    "op": "core/multivalued-cell-split",
+    "description": "Split multi-valued cells in column Authors",
+    "columnName": "Authors",
+    "keyColumnName": "Title",
+    "mode": "separator",
+    "separator": "|",
+    "regex": false
+  },
+  {
+    "op": "core/multivalued-cell-join",
+    "description": "Join multi-valued cells in column Authors",
+    "columnName": "Authors",
+    "keyColumnName": "Title",
+    "separator": "|"
+  },
+  {
+    "op": "core/multivalued-cell-split",
+    "description": "Split multi-valued cells in column Subjects",
+    "columnName": "Subjects",
+    "keyColumnName": "Title",
+    "mode": "separator",
+    "separator": "|",
+    "regex": false
+  },
+  {
+    "op": "core/multivalued-cell-join",
+    "description": "Join multi-valued cells in column Subjects",
+    "columnName": "Subjects",
+    "keyColumnName": "Title",
+    "separator": "|"
+  },
+  {
+    "op": "core/mass-edit",
+    "description": "Mass edit cells in column Language",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": []
+    },
+    "columnName": "Language",
+    "expression": "value",
+    "edits": [
+      {
+        "fromBlank": false,
+        "fromError": false,
+        "from": [
+          "English"
+        ],
+        "to": "EN"
+      }
+    ]
+  },
+  {
+    "op": "core/multivalued-cell-split",
+    "description": "Split multi-valued cells in column Authors",
+    "columnName": "Authors",
+    "keyColumnName": "Title",
+    "mode": "separator",
+    "separator": "|",
+    "regex": false
+  },
+  {
+    "op": "core/text-transform",
+    "description": "Text transform on cells in column Publisher using expression value.trim()",
+    "engineConfig": {
+      "mode": "row-based",
+      "facets": []
+    },
+    "columnName": "Publisher",
+    "expression": "value.trim()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/text-transform",
+    "description": "Text transform on cells in column Title using expression grel:value.toTitlecase()",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": [
+        {
+          "omitError": false,
+          "expression": "value",
+          "selectBlank": false,
+          "selection": [
+            {
+              "v": {
+                "v": "Akshantala Enterprises",
+                "l": "Akshantala Enterprises"
+              }
+            },
+            {
+              "v": {
+                "v": "Society of Pharmaceutical Technocrats",
+                "l": "Society of Pharmaceutical Technocrats"
+              }
+            }
+          ],
+          "selectError": false,
+          "invert": false,
+          "name": "Publisher",
+          "omitBlank": false,
+          "type": "list",
+          "columnName": "Publisher"
+        }
+      ]
+    },
+    "columnName": "Title",
+    "expression": "grel:value.toTitlecase()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/text-transform",
+    "description": "Text transform on cells in column Date using expression grel:value.toDate(\"dd/MM/yyyy\")",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": []
+    },
+    "columnName": "Date",
+    "expression": "grel:value.toDate(\"dd/MM/yyyy\")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/column-addition",
+    "description": "Create column Date 2 at index 5 based on column Date using expression grel:value.toString(\"dd MMMM yyyy\")",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": []
+    },
+    "newColumnName": "Date 2",
+    "columnInsertIndex": 5,
+    "baseColumnName": "Date",
+    "expression": "grel:value.toString(\"dd MMMM yyyy\")",
+    "onError": "set-to-blank"
+  },
+  {
+    "op": "core/text-transform",
+    "description": "Text transform on cells in column Authors using expression grel:value.match(/(.*),(.*)/).reverse().join(\" \")",
+    "engineConfig": {
+      "mode": "row-based",
+      "facets": [
+        {
+          "omitError": false,
+          "expression": "grel:value.contains(\",\").toString()",
+          "selectBlank": false,
+          "selection": [
+            {
+              "v": {
+                "v": "true",
+                "l": "true"
+              }
+            }
+          ],
+          "selectError": false,
+          "invert": false,
+          "name": "Authors",
+          "omitBlank": false,
+          "type": "list",
+          "columnName": "Authors"
+        }
+      ]
+    },
+    "columnName": "Authors",
+    "expression": "grel:value.match(/(.*),(.*)/).reverse().join(\" \")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/column-addition-by-fetching-urls",
+    "description": "Create column journal details at index 9 by fetching URLs based on column ISSNs using expression grel:\"https://api.crossref.org/journals/1422-0067\"",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": [
+        {
+          "omitError": false,
+          "expression": "row.starred",
+          "selectBlank": false,
+          "selection": [
+            {
+              "v": {
+                "v": true,
+                "l": "true"
+              }
+            }
+          ],
+          "selectError": false,
+          "invert": false,
+          "name": "Starred Rows",
+          "omitBlank": false,
+          "type": "list",
+          "columnName": ""
+        }
+      ]
+    },
+    "newColumnName": "journal details",
+    "columnInsertIndex": 9,
+    "baseColumnName": "ISSNs",
+    "urlExpression": "grel:\"https://api.crossref.org/journals/1422-0067\"",
+    "onError": "set-to-blank",
+    "delay": 5000,
+    "cacheResponses": true
+  },
+  {
+    "op": "core/column-addition",
+    "description": "Create column journal title at index 10 based on column journal details using expression grel:value.parseJson().message.title",
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": [
+        {
+          "omitError": false,
+          "expression": "row.starred",
+          "selectBlank": false,
+          "selection": [
+            {
+              "v": {
+                "v": true,
+                "l": "true"
+              }
+            }
+          ],
+          "selectError": false,
+          "invert": false,
+          "name": "Starred Rows",
+          "omitBlank": false,
+          "type": "list",
+          "columnName": ""
+        }
+      ]
+    },
+    "newColumnName": "journal title",
+    "columnInsertIndex": 10,
+    "baseColumnName": "journal details",
+    "expression": "grel:value.parseJson().message.title",
+    "onError": "set-to-blank"
+  },
+  {
+    "op": "core/recon",
+    "description": "Reconcile cells in column Publisher to type /organization/organization",
+    "columnName": "Publisher",
+    "config": {
+      "mode": "standard-service",
+      "service": "http://refine.codefork.com/reconcile/viaf",
+      "identifierSpace": "http://rdf.freebase.com/ns/user/hangy/viaf",
+      "schemaSpace": "http://rdf.freebase.com/ns/type.object.id",
+      "type": {
+        "id": "/organization/organization",
+        "name": "Corporate Name"
+      },
+      "autoMatch": false,
+      "columnDetails": [],
+      "limit": 0
+    },
+    "engineConfig": {
+      "mode": "record-based",
+      "facets": []
+    }
+  }
+]
