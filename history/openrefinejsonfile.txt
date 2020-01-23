@@ -173,7 +173,7 @@
   },
   {
     "op": "core/column-addition-by-fetching-urls",
-    "description": "Create column journal details at index 9 by fetching URLs based on column ISSNs using expression grel:\"https://api.crossref.org/journals/1422-0067\"",
+    "description": "Create column journal details at index 9 by fetching URLs based on column ISSNs using expression grel:\"https://portal.issn.org/resource/ISSN/\"",
     "engineConfig": {
       "mode": "record-based",
       "facets": [
